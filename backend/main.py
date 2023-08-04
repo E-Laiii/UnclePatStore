@@ -1,10 +1,18 @@
 from fastapi import FastAPI, HTTPException
 import logging
 from models import Item
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
+# Allow requests from all origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 store = []
 

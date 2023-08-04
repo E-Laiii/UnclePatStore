@@ -1,0 +1,9 @@
+# Virtual environment
+unclepat_env/
+
+# Python Bytecode & Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+

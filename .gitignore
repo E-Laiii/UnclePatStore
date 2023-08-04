@@ -7,3 +7,30 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+/dist/
+/.sass-cache/
+
+# Vue CLI generated files
+/.cache/
+/.temp/
+/babel.config.js
+/vue.config.js
+/tests/unit/coverage/
+
+# Miscellaneous
+/.DS_Store
+/.env
+/.env.local
+/.env.development.local
+/.env.test.local
+/.env.production.local
+
+# IDE/Editor specific files
+.idea/
+.vscode/

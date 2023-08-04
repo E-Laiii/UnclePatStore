@@ -3,7 +3,7 @@
       <h2>Add Item</h2>
       <form @submit.prevent="addItem">
         <input v-model="newItem.name" type="text" placeholder="Item Name" required>
-        <input v-model="newItem.price" type="number" placeholder="Item Price" required>
+        <input v-model="newItem.price" type="number" step="0.01" placeholder="Item Price" required>
         <button type="submit">Add Item</button>
       </form>
     </div>

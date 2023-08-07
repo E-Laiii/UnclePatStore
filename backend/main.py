@@ -9,6 +9,7 @@ import logging
 
 # FastAPI app
 app = FastAPI()
+
 # Allow requests from all origins
 app.add_middleware(
     CORSMiddleware,
@@ -17,6 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+#Logging Template
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
 # SQLite database setup
@@ -51,12 +53,16 @@ def get_db():
     finally:
         db.close()
 
+# Checking if fastapi is working 
 @app.get("/")
 async def read_root():
     return {"message": "Hello! Backend fastapi is working."}
 
+# POST API Call to create new items in store
 @app.post("/items/", response_model=Item)
 async def create_item(item: Item, db: Session = Depends(get_db)):
+
+    # Create item with all values
     db_item = ItemModel(name=item.name, description=item.description, price = item.price)
 
     db.add(db_item)
@@ -68,6 +74,7 @@ async def create_item(item: Item, db: Session = Depends(get_db)):
 
     return db_item
 
+# GET API Call to get all items in store
 @app.get("/items/", response_model=None)
 def get_all_items():
 
@@ -81,8 +88,11 @@ def get_all_items():
 
     return items
 
+# PUT API Call to update selected items within store
 @app.put("/items/{item_id}", response_model=Item)
 async def update_item(item_id: int, item: Item, db: Session = Depends(get_db)):
+
+    # Fetch item that was selected according to id
     db_item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -98,8 +108,11 @@ async def update_item(item_id: int, item: Item, db: Session = Depends(get_db)):
 
     return item
 
+# DELETE API Call up delete selected items within store
 @app.delete("/items/{item_id}", response_model=Item)
 async def delete_item(item_id: int, db: Session = Depends(get_db)):
+
+    # Fetch item that was selected according to id
     db_item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")

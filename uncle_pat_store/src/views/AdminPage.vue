@@ -17,9 +17,14 @@
 
     <!-- Admin Page Content -->
     <div v-if="loggedIn">
-      <h1>Admin Page</h1>
-      <p>This is where you can change/alter your store items.</p>
-      <!-- Rest of the admin page content goes here -->
+      <h1>Uncle Pat Admin Page</h1>
+      <img
+        alt="Uncle Pat logo"
+        src="../assets/logo.png"
+        style="width: 200px; height: 200px; display: block; margin: auto;"
+      />
+      <p class="text-center">This is where you can change/alter your store items.</p>
+      <!-- Call AdminMethods -->
       <add-item @add-item="handleAddItem" />
     </div>
   </div>
@@ -45,12 +50,14 @@ export default {
     };
   },
   methods: {
+    // Re-route to adminpage
     goToAdminPage() {
       this.$router.push({ path: "/admin-page" });
     },
+    //Authentication 
     authenticate() {
-      // Perform authentication logic here (e.g., check credentials against server)
-      // For simplicity, let's just assume a hardcoded admin username and password
+      // Perform authentication logic here
+      // Let's just assume a hardcoded admin username and password
       const adminUsername = "adminpat";
       const adminPassword = "adminpat";
 

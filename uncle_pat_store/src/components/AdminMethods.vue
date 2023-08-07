@@ -12,7 +12,7 @@
       </label>
       <label>
         Price:
-        <input type="number" v-model="itemPrice" />
+        <input type="number" v-model="itemPrice" step="0.01"/>
       </label>
       <button type="submit">Add Item</button>
     </form>

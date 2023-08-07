@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Add Item</h2>
+    <h2>Updating Items:</h2>
     <!-- Form for adding items -->
     <form @submit.prevent="addItem">
       <label>
@@ -19,7 +19,7 @@
     </form>
 
     <!-- Your table to display existing items -->
-    <q-page>
+    <q-page style="margin-top: 20px;">
       <q-table :rows="tableData" :columns="tableColumns">
         <!-- 'actions' column -->
         <template v-slot:body-cell-actions="{ row }">

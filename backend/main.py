@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from datetime import datetime
 from pydantic import BaseModel
+import logging
 
 # FastAPI app
 app = FastAPI()
@@ -15,6 +16,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
 # SQLite database setup
 DATABASE_URL = "sqlite:///./items.db"
@@ -59,6 +62,10 @@ async def create_item(item: Item, db: Session = Depends(get_db)):
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
+
+    # Log the event
+    logging.info(f"Item added: {item}")
+
     return db_item
 
 @app.get("/items/", response_model=None)
@@ -68,6 +75,9 @@ def get_all_items():
     db = SessionLocal()
     items = db.query(ItemModel).all()
     db.close()
+
+    # Log the event
+    logging.info(f"List of items fetched successfully")
 
     return items
 
@@ -82,6 +92,10 @@ async def update_item(item_id: int, item: Item, db: Session = Depends(get_db)):
     db_item.price = item.price
     db.commit()
     db.refresh(db_item)
+
+    # Log the event
+    logging.info(f"Item Updated: {item}")
+
     return item
 
 @app.delete("/items/{item_id}", response_model=Item)
@@ -92,4 +106,9 @@ async def delete_item(item_id: int, db: Session = Depends(get_db)):
     
     db.delete(db_item)
     db.commit()
+
+    # Log the event
+    item_name = db_item.name
+    logging.info(f"Item Deleted: {item_name}")
+
     return db_item

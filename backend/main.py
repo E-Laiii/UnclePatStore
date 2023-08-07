@@ -1,11 +1,13 @@
-from fastapi import FastAPI, HTTPException
-import logging
-from models import Item
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from datetime import datetime
+from pydantic import BaseModel
 
+# FastAPI app
 app = FastAPI()
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
-
 # Allow requests from all origins
 app.add_middleware(
     CORSMiddleware,
@@ -14,58 +16,80 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-store = []
+# SQLite database setup
+DATABASE_URL = "sqlite:///./items.db"
+engine = create_engine(DATABASE_URL)
+Base = declarative_base()
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+# Database model
+class ItemModel(Base):
+    __tablename__ = "items"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    description = Column(String, index=True)
+    price = Column(Float, index= True)
+
+# Pydantic model for request/response validation
+class Item(BaseModel):
+    name: str
+    description: str
+    price: float
+
+# Create the database tables
+Base.metadata.create_all(bind=engine)
+
+# Dependency to get the database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @app.get("/")
-async def root():
-    return {"message": "hello! Backend fastapi is working."}
+async def read_root():
+    return {"message": "Hello! Backend fastapi is working."}
 
-@app.post("/items/")
-def add_item(item: Item):
-    # Append the item to the store list
-    store.append(item)
+@app.post("/items/", response_model=Item)
+async def create_item(item: Item, db: Session = Depends(get_db)):
+    db_item = ItemModel(name=item.name, description=item.description, price = item.price)
 
-    # Log the event
-    logging.info(f"Item added: {item}")
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
 
-    return {"message": "Item added successfully", "item": item}
-
-@app.get("/items/")
+@app.get("/items/", response_model=None)
 def get_all_items():
 
-    # Log the event
-    logging.info(f"List of items fetched successfully")
+    # Fetch list of items from the database
+    db = SessionLocal()
+    items = db.query(ItemModel).all()
+    db.close()
 
-    # Fetch list of items
-    return store
+    return items
 
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    # Checking if item is out of range or not
-    if item_id < 0 or item_id >= len(store):
+@app.put("/items/{item_id}", response_model=Item)
+async def update_item(item_id: int, item: Item, db: Session = Depends(get_db)):
+    db_item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
+    if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
     
-    # Update the item
-    store[item_id] = item
+    db_item.name = item.name
+    db_item.description = item.description
+    db_item.price = item.price
+    db.commit()
+    db.refresh(db_item)
+    return item
 
-    # Log the event
-    logging.info(f"Item Updated: {item}")
-
-    return {"message": "Item updated successfully", "item": item}
-
-@app.delete("/items/{item_id}")
-def delete_item(item_id: int):
-    # Checking if item is out of range or not
-    if item_id < 0 or item_id >= len(store):
+@app.delete("/items/{item_id}", response_model=Item)
+async def delete_item(item_id: int, db: Session = Depends(get_db)):
+    db_item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
+    if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
     
-    # Delete the item
-    deleted_item = store.pop(item_id)
-
-    # Access the name of the deleted item directly from the Item instance
-    deleted_item_name = deleted_item.name
-
-    # Log the event
-    logging.info(f"Item Deleted: {deleted_item_name}")
-
-    return {"message": "Item deleted successfully", "item": deleted_item_name}
+    db.delete(db_item)
+    db.commit()
+    return db_item

@@ -1,6 +1,7 @@
 <template>
   <div>
     <h2>Add Item</h2>
+    <!-- Form for adding items -->
     <form @submit.prevent="addItem">
       <label>
         Name:
@@ -17,10 +18,10 @@
       <button type="submit">Add Item</button>
     </form>
 
-    <!-- Your table to display existing items goes here -->
+    <!-- Your table to display existing items -->
     <q-page>
       <q-table :rows="tableData" :columns="tableColumns">
-        <!-- Add a custom slot for the 'actions' column -->
+        <!-- 'actions' column -->
         <template v-slot:body-cell-actions="{ row }">
           <q-td>
             <q-btn @click="handleEdit(row)" label="Edit" color="primary" />
@@ -29,7 +30,7 @@
         </template>
       </q-table>
 
-      <!-- Dialog for updating the row -->
+      <!-- Dialog for updating the item row -->
       <q-dialog v-model="dialogVisible">
         <q-card>
           <q-card-section>
@@ -45,6 +46,7 @@
         </q-card>
       </q-dialog>
 
+      <!-- Dialog for deleting the item row -->
       <q-dialog v-model="deleteConfirmationVisible">
         <q-card>
           <q-card-section>
@@ -82,6 +84,7 @@ export default {
       tableData: [],
       tableColumns: [
         // Define your table columns here
+        // id section
         {
           name: "id",
           required: true,
@@ -90,6 +93,7 @@ export default {
           field: "id",
           sortable: true,
         },
+        // name section
         {
           name: "name",
           align: "left",
@@ -97,6 +101,7 @@ export default {
           field: "name",
           sortable: true,
         },
+        // description section
         {
           name: "description",
           align: "left",
@@ -104,6 +109,7 @@ export default {
           field: "description",
           sortable: true,
         },
+        // price section
         {
           name: "price",
           align: "left",
@@ -111,11 +117,12 @@ export default {
           field: "price",
           sortable: true,
         },
+        // action section
         {
           name: "actions",
           align: "left",
           label: "Actions",
-          field: "id", // Use a unique identifier for the item (e.g., 'id')
+          field: "id", 
           format: () => {
             return `
               <q-btn @click="handleEdit(row)" label="Edit" color="primary" />
@@ -123,12 +130,11 @@ export default {
             `;
           },
         },
-
-        // Add more columns as needed
       ],
     };
   },
   methods: {
+    // Get items from fastapi and show in table
     async fetchItems() {
       try {
         const response = await axios.get("http://127.0.0.1:8000/items/");
@@ -137,6 +143,7 @@ export default {
         console.error("Error fetching items:", error);
       }
     },
+    // Adding items into store
     async addItem() {
       // Validate the inputs before submitting
       if (!this.itemName || !this.itemDescription || this.itemPrice <= 0) {
@@ -163,7 +170,10 @@ export default {
         const updatedItemsResponse = await axios.get(
           "http://127.0.0.1:8000/items/"
         );
+
+        // Update the table
         this.tableData = updatedItemsResponse.data;
+
       } catch (error) {
         console.error("Error adding item:", error);
       }
@@ -173,14 +183,17 @@ export default {
       this.itemDescription = "";
       this.itemPrice = 0;
     },
+    // Show dialog if edit button is chosen
     async handleEdit(row) {
       // Set the editedItem with the values of the selected row
       this.editedItem = { ...row };
       this.dialogVisible = true; // Show the dialog
     },
+    // Close the edit dialog without editing the item
     cancelEdit() {
       this.dialogVisible = false; // Hide the dialog
     },
+    // Updating the item
     async saveEdit() {
       try {
         // Make the PUT request to update the item
@@ -195,6 +208,7 @@ export default {
           "http://127.0.0.1:8000/items/"
         );
 
+        // Show updated table
         this.tableData = updatedItemsResponse.data;
 
         this.dialogVisible = false; // Hide the dialog after saving

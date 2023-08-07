@@ -32,7 +32,7 @@ cd uncle_pat_store
 npm install
 
 # Run the backend API server
-cd backend
+cd ..\backend
 uvicorn main:app --reload
 
 # Run the frontend server

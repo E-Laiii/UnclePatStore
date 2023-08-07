@@ -40,6 +40,11 @@ cd uncle_pat_store
 npm run serve
 
 ```
+Admin Credentials
+* Username: adminpat
+* Password: adminpat
+
+
 ## View Uncle Pat's online store
 
 To view Uncle Pat's online store, follow the steps below:
@@ -98,4 +103,10 @@ When deploying the application on a cloud environment, these techniques can be c
 8. Implement access controls and role-based access control (RBAC) to limit user permissions.
 9. Regularly back up data to protect against data loss and enable quick recovery in case of a security breach.
 10. Regularly perform security audits and vulnerability assessments to identify and address security weaknesses.
+
+##  Examples of Online Store
+
+Homepage
+
+Adminpage
 

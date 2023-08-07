@@ -26,7 +26,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Database model
 class ItemModel(Base):
     __tablename__ = "items"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, index=True)
     description = Column(String, index=True)
     price = Column(Float, index= True)

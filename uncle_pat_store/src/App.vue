@@ -43,9 +43,6 @@ export default {
     goToHome() {
       this.$router.push({ path: '/' })
     },
-    goToAbout() {
-      this.$router.push({ path: '/about' })
-    },
     goToAdmin() {
       this.$router.push({ path: '/admin' })
     }

@@ -1,8 +1,14 @@
 <template>
     <div class="q-pa-md">
         <h1>Welcome to the Uncle Pat Store</h1>
-        <p>This is where all the best goods are sold</p>
-
+        <img
+        alt="Uncle Pat logo"
+        src="../assets/logo.png"
+        style="width: 200px; height: 200px; display: block; margin: auto;"
+      />
+        <p class="text-center">Best goods only.</p>
+        
+        <!-- Your table to display existing items -->
         <item-list :items="items" />
 
     </div>
@@ -24,9 +30,7 @@ export default {
     };
   },
   methods: {
-    goToAdminPage(){
-      this.$router.push({ path: '/admin-page' })
-    },
+    // Fetching items
     async fetchItems() {
       try {
         const response = await axios.get('http://127.0.0.1:8000/items/');

@@ -106,7 +106,7 @@ When deploying the application on a cloud environment, these techniques can be c
 
 ##  Examples of Online Store
 
-![Homepage Image](https://github.com/E-Laiii/UnclePatStore.git/images/UnclePatStore_Homepage.png)
+![Homepage Image](https://github.com/E-Laiii/UnclePatStore/blob/main/images/UnclePatStore_Homepage.png)
 
-![Adminpage Image](https://github.com/E-Laiii/UnclePatStore.git/images/UnclePatStore_Adminpage.png)
+![Adminpage Image](https://github.com/E-Laiii/UnclePatStore/blob/main/images/UnclePatStore_Adminpage.png)
 

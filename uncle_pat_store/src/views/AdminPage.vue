@@ -12,7 +12,7 @@
 
 <script>
 // import axios from 'axios';
-import AddItem from '../components/AddItem.vue';
+import AddItem from '../components/AdminMethods.vue';
 
 export default {
   name: 'App',
@@ -28,15 +28,6 @@ export default {
     goToAdminPage(){
       this.$router.push({ path: '/admin-page' })
     },
-    // async handleAddItem(item) {
-    //   try {
-    //     // const response = await axios.post('http://127.0.0.1:8000/items/', item);
-    //     // console.log(item)
-    //     // this.items.push(response.data.item);
-    //   } catch (error) {
-    //     console.error('Error adding item:', error);
-    //   }
-    // },
   },
 
 };

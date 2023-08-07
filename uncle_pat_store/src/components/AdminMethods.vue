@@ -4,15 +4,15 @@
     <form @submit.prevent="addItem">
       <label>
         Name:
-        <input type="text" v-model="itemName" />
+        <input type="text" v-model="itemName" required />
       </label>
       <label>
         Description:
-        <input type="text" v-model="itemDescription" />
+        <input type="text" v-model="itemDescription" required />
       </label>
       <label>
         Price:
-        <input type="number" v-model="itemPrice" step="0.01"/>
+        <input type="number" v-model="itemPrice" step="0.01" required min="0" />
       </label>
       <button type="submit">Add Item</button>
     </form>
@@ -46,19 +46,17 @@
       </q-dialog>
 
       <q-dialog v-model="deleteConfirmationVisible">
-      <q-card>
-        <q-card-section>
-          <p>Are you sure you want to delete this item?</p>
-        </q-card-section>
+        <q-card>
+          <q-card-section>
+            <p>Are you sure you want to delete this item?</p>
+          </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn @click="cancelDelete" label="Cancel" />
-          <q-btn @click="confirmDelete" label="Delete" color="negative" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-
+          <q-card-actions align="right">
+            <q-btn @click="cancelDelete" label="Cancel" />
+            <q-btn @click="confirmDelete" label="Delete" color="negative" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </div>
 </template>
@@ -77,9 +75,9 @@ export default {
       itemToDelete: null,
       editedItem: {
         id: null,
-        name: '',
-        description: '',
-        price: 0
+        name: "",
+        description: "",
+        price: 0,
       },
       tableData: [],
       tableColumns: [
@@ -140,31 +138,32 @@ export default {
       }
     },
     async addItem() {
+      // Validate the inputs before submitting
+      if (!this.itemName || !this.itemDescription || this.itemPrice <= 0) {
+        alert(
+          "Please fill in all the required fields and provide a valid price."
+        );
+        return;
+      }
+
       const newItem = {
-        id: this.id,
         name: this.itemName,
         description: this.itemDescription,
         price: this.itemPrice,
       };
 
       try {
-        const response = await axios.post(
+        // Save the item to the backend
+        await axios.post(
           "http://127.0.0.1:8000/items/",
           newItem
         );
 
-        // Assign the returned 'id' to the newItem
-        newItem.id = response.data.id;
-
-        // Add the newItem to the tableData array
-        this.tableData.push(newItem);
-
-        // Clear the input fields after adding the item
-        this.itemName = "";
-        this.itemDescription = "";
-        this.itemPrice = 0;
-
-        // this.tableData.push(response.data.item);
+        // Fetch the updated data from the backend after item creation
+        const updatedItemsResponse = await axios.get(
+          "http://127.0.0.1:8000/items/"
+        );
+        this.tableData = updatedItemsResponse.data;
       } catch (error) {
         console.error("Error adding item:", error);
       }
@@ -189,22 +188,23 @@ export default {
           `http://127.0.0.1:8000/items/${this.editedItem.id}`,
           this.editedItem
         );
-        console.log('Updated Item:', response.data);
+        console.log("Updated Item:", response.data);
 
-        // If needed, you can update the item in the local tableData with the response data
-        const index = this.tableData.findIndex(item => item.id === this.editedItem.id);
-        if (index !== -1) {
-          this.tableData.splice(index, 1, response.data);
-        }
+        // Fetch the updated data from the backend after item creation
+        const updatedItemsResponse = await axios.get(
+          "http://127.0.0.1:8000/items/"
+        );
+
+        this.tableData = updatedItemsResponse.data;
 
         this.dialogVisible = false; // Hide the dialog after saving
       } catch (error) {
-        console.error('Error updating item:', error);
+        console.error("Error updating item:", error);
       }
     },
     // Show the delete confirmation dialog
     handleDelete(row) {
-      this.itemToDelete = row;
+      this.itemToDelete = { ...row };
       this.deleteConfirmationVisible = true;
     },
 
